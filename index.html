@@ -376,9 +376,6 @@ body.dark .hero{background:linear-gradient(150deg,#0d1230 0%,#120e2a 40%,#091920
 .sc-tip{background:var(--blue-dim);border-left:3px solid var(--blue);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:8px 12px;font-size:12px;color:var(--blue)}
 .mats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:9px;margin:14px 0}
 .mat{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:11px 14px;font-size:13px;color:var(--text2)}
-.reward-box{background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;border-radius:var(--radius);padding:36px 26px;text-align:center}
-.locked-notice{display:none;background:rgba(217,119,6,.1);border:1.5px solid rgba(217,119,6,.3);border-radius:var(--radius-sm);padding:12px 18px;font-size:13px;color:var(--amber);margin-bottom:14px}
-.locked-notice.show{display:block}
 
 /* ══════════════ NOTES ══════════════ */
 .notes-area{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:26px}
@@ -779,7 +776,7 @@ footer{background:#0b0e17;color:#6b7280;padding:52px 24px 30px;margin-top:0}
   <div class="pg-wrap">
     <div id="proj-select">
       <div class="pg-hd">Student Projects</div>
-      <div class="pg-sub">Hands-on physics projects. Follow the guided steps, complete each task, then claim your reward badge!</div>
+      <div class="pg-sub">Hands-on physics projects. Follow the guided steps and complete each task!</div>
       <div class="proj-cards">
         <div class="proj-card" onclick="openProject('hydraulic')">
           <div class="proj-cov" style="background:linear-gradient(135deg,#0f2460,#2563eb);">💧</div>
@@ -1034,7 +1031,6 @@ function renderLesson(i){
   const next=isLast?`<button class="l-next" onclick="closeModule()">🏠 Back to Modules</button>`:
     `<button class="l-next" onclick="doneSet.add(${i});goLesson(${i+1})">Next Lesson →</button>`;
   document.getElementById('l-con').innerHTML=content+`<div class="lesson-nav-btns">${prev}${next}</div>`;
-  // init embedded quizzes
   const qmap={mechanics_quiz:{box:'mq-box',fill:'mq-fill',ctr:'mq-ctr',sc:'mq-sc',nb:'mq-next',qs:MECH_Q},
                optics_quiz:{box:'oq-box',fill:'oq-fill',ctr:'oq-ctr',sc:'oq-sc',nb:'oq-next',qs:OPTICS_Q},
                waves_quiz:{box:'wq-box',fill:'wq-fill',ctr:'wq-ctr',sc:'wq-sc',nb:'wq-next',qs:WAVES_Q}};
@@ -1598,10 +1594,8 @@ function drawHooke(mass,k,x){
   const ctx=c.getContext('2d'),W=c.width,H=c.height;
   ctx.clearRect(0,0,W,H);
   ctx.fillStyle=dark?'#1c2236':'#f7f8fc';ctx.fillRect(0,0,W,H);
-  // ceiling
   ctx.fillStyle='#64748b';ctx.fillRect(170,18,120,14);
   const cx=230,springTop=32,springLen=60+Math.min(x*700,140);
-  // spring
   ctx.beginPath();ctx.moveTo(cx,springTop);
   const coils=10;
   for(let i=0;i<=coils*4;i++){
@@ -1609,11 +1603,9 @@ function drawHooke(mass,k,x){
     i===0?ctx.moveTo(cx,springTop):ctx.lineTo(cx+dx,y);
   }
   ctx.strokeStyle='#2563eb';ctx.lineWidth=2.5;ctx.stroke();
-  // mass
   ctx.fillStyle='#2563eb';ctx.fillRect(cx-32,springTop+springLen,64,52);
   ctx.fillStyle='#fff';ctx.font='bold 13px Plus Jakarta Sans';ctx.textAlign='center';
   ctx.fillText(mass+'g',cx,springTop+springLen+30);
-  // labels
   ctx.fillStyle=dark?'#7b8db5':'#64748b';ctx.font='12px Plus Jakarta Sans';ctx.textAlign='left';
   ctx.fillText('F = '+F.toFixed(2)+' N',300,80);
   ctx.fillText('x = '+x.toFixed(3)+' m',300,100);
@@ -1708,14 +1700,11 @@ function drawEcho(){
   const ctx=c.getContext('2d'),W=c.width,H=c.height;
   ctx.clearRect(0,0,W,H);
   ctx.fillStyle=dark?'#1c2236':'#f0f9ff';ctx.fillRect(0,0,W,H);
-  // person
   ctx.fillStyle='#2563eb';ctx.beginPath();ctx.arc(55,H/2-22,14,0,Math.PI*2);ctx.fill();
   ctx.fillRect(46,H/2-8,18,32);
   ctx.fillStyle=dark?'#7b8db5':'#4b5568';ctx.font='11px Plus Jakarta Sans';ctx.textAlign='center';ctx.fillText('You',55,H/2+36);
-  // wall
   ctx.fillStyle='#64748b';ctx.fillRect(420,14,22,H-28);
   ctx.fillStyle=dark?'#7b8db5':'#4b5568';ctx.fillText('Wall',431,H-6);
-  // waves
   const waveX=55+(365*((Math.sin(echoPhase)+1)/2));
   for(let i=0;i<4;i++){
     const wx=55+(waveX-55)*((4-i)/4);
@@ -1755,7 +1744,8 @@ function loadChart(cb){
 }
 
 /* ════════════════════════════════
-   PROJECTS
+   PROJECTS  — Overview + Steps only
+   (Reflect and Reward sections removed)
 ════════════════════════════════ */
 const PROJECTS={
   hydraulic:{title:'Hydraulic Lift',concept:'💧 Pressure & Pascal\'s Principle',grad:'linear-gradient(135deg,#0f2460,#2563eb)',diff:'Intermediate',time:'45 min',xp:'80 XP',badge:'💧',
@@ -1769,11 +1759,6 @@ const PROJECTS={
       {t:'Build the Platform',d:'Tape a small cardboard platform on top of the large syringe plunger. This is the "lift".',tip:'Make sure the platform is balanced.'},
       {t:'Load and Lift',d:'Place a small object on the platform. Push the small syringe plunger and observe the object being lifted.',tip:'Notice a small push on the small syringe causes large movement.'},
       {t:'Analyse Results',d:'Calculate the mechanical advantage: MA = A₂/A₁ (ratio of cross-sectional areas).',tip:'If A₂ is 3× larger than A₁, output force is 3× input force.'},
-    ],
-    qs:[
-      {q:"Pascal's Principle states pressure applied to a fluid is:",opts:["Lost as heat","Transmitted equally in all directions","Only transmitted upward","Halved"],ans:1,exp:"Pascal's Principle: pressure is transmitted equally in all directions in a fluid."},
-      {q:"Pistons of area 4 cm² and 20 cm². Input force = 50 N. Output force?",opts:["10 N","250 N","200 N","50 N"],ans:1,exp:"F₂ = F₁ × A₂/A₁ = 50 × (20/4) = 250 N."},
-      {q:"Why must the fluid in a hydraulic system be a liquid?",opts:["Liquids are transparent","Liquids are incompressible","Gases are cheaper","Gases are colourful"],ans:1,exp:"Liquids are nearly incompressible — pressure transmitted without energy loss."},
     ]
   },
   periscope:{title:'Periscope',concept:'🔭 Reflection of Light',grad:'linear-gradient(135deg,#2d0a6e,#7c3aed)',diff:'Beginner',time:'30 min',xp:'60 XP',badge:'🔭',
@@ -1787,11 +1772,6 @@ const PROJECTS={
       {t:'Fix the Mirrors',d:'Attach each mirror at 45° to the horizontal, reflecting surfaces facing each other. Secure with tape.',tip:'If mirrors are not exactly at 45°, the image will be distorted or missing.'},
       {t:'Test the Periscope',d:'Hold the periscope vertically. Look through the bottom slot. You should see what is above the top slot.',tip:'Try using it to look over a wall or fence!'},
       {t:'Trace the Ray Path',d:'Draw a diagram showing: ray enters top slot → reflects off top mirror at 45° → travels down → reflects off bottom mirror → exits to eye.',tip:'At each mirror: angle in = angle out.'},
-    ],
-    qs:[
-      {q:"Why must each mirror be at exactly 45°?",opts:["For decoration","So light reflects at 90° and travels straight down","To magnify the image","To make it waterproof"],ans:1,exp:"At 45°, i = 45°, so r = 45°. The reflected ray turns 90° directly into the tube."},
-      {q:"What type of image does a plane mirror form?",opts:["Real, inverted","Virtual, upright, same size","Real, magnified","Virtual, inverted"],ans:1,exp:"Plane mirror: virtual, upright, same size as object, laterally inverted."},
-      {q:"The periscope uses which property of light?",opts:["Refraction","Diffraction","Reflection","Absorption"],ans:2,exp:"A periscope works by reflecting light using two plane mirrors."},
     ]
   },
   speaker:{title:'Simple Speaker',concept:'🔊 Electromagnetism & Sound',grad:'linear-gradient(135deg,#0d4a3a,#0d9488)',diff:'Intermediate',time:'40 min',xp:'75 XP',badge:'🔊',
@@ -1805,31 +1785,26 @@ const PROJECTS={
       {t:'Attach the Cone',d:'Tape the coil to the bottom of the paper cup (cone). The cup amplifies the vibrations into sound waves.',tip:'Secure the coil at the very centre of the cup base.'},
       {t:'Position the Magnet',d:'Place the permanent magnet inside the coil or very close to it. The coil must be able to move freely.',tip:'The coil must not touch the magnet — it needs to vibrate freely.'},
       {t:'Connect and Test',d:'Connect the coil ends to a small audio amplifier or phone audio output. Play music and listen!',tip:'If no sound, check wire connections and try reversing the polarity.'},
-    ],
-    qs:[
-      {q:"In a loudspeaker, alternating current causes the coil to:",opts:["Stay still","Vibrate back and forth","Spin continuously","Heat up only"],ans:1,exp:"AC current alternates direction, causing the coil to vibrate in and out of the magnetic field."},
-      {q:"What converts coil vibrations into audible sound?",opts:["The magnet","The wire","The paper cone","The current"],ans:2,exp:"The paper cone moves with the coil and pushes/pulls air, creating sound waves."},
-      {q:"The force on a current-carrying coil in a magnetic field is:",opts:["F = mv","F = qE","F = BIL","F = ρgh"],ans:2,exp:"F = BIL — force depends on magnetic field B, current I, and length of conductor L."},
     ]
   }
 };
 
-let projSteps={},projQScores={},projAnswered={};
+let projSteps={};
 
 function openProject(id){
-  const p=PROJECTS[id];
-  if(!projSteps[id])projSteps[id]=new Array(p.steps.length).fill(false);
-  if(!projQScores[id])projQScores[id]=0;
-  if(!projAnswered[id])projAnswered[id]=new Array(p.qs.length).fill(false);
+  if(!projSteps[id])projSteps[id]=new Array(PROJECTS[id].steps.length).fill(false);
   document.getElementById('proj-select').style.display='none';
   document.getElementById('proj-detail').style.display='block';
-  renderProject(id);window.scrollTo(0,0);
+  renderProject(id);
+  window.scrollTo(0,0);
 }
+
 function closeProject(){
   document.getElementById('proj-select').style.display='block';
   document.getElementById('proj-detail').style.display='none';
   document.getElementById('proj-detail').innerHTML='';
 }
+
 function renderProject(id){
   const p=PROJECTS[id];
   const mats=p.mats.map(m=>`<div class="mat">${m}</div>`).join('');
@@ -1845,12 +1820,6 @@ function renderProject(id){
       ${s.tip?`<div class="sc-tip">💡 ${s.tip}</div>`:''}
     </div>`;
   }).join('');
-  const qHTML=p.qs.map((q,qi)=>{
-    const answered=projAnswered[id][qi];
-    const opts=q.opts.map((o,oi)=>`<button class="q-opt${answered&&oi===q.ans?' correct':''}" id="pqo-${id}-${qi}-${oi}" onclick="answerProjQ('${id}',${qi},${oi})" ${answered?'disabled':''}>${o}</button>`).join('');
-    return`<div style="margin-bottom:20px;"><div class="q-q">${q.q}</div><div class="q-opts">${opts}</div>
-      <div class="q-fb${answered?' show ok':''}" id="pqf-${id}-${qi}">${answered?q.exp:''}</div></div>`;
-  }).join('');
 
   document.getElementById('proj-detail').innerHTML=`
     <button class="back-btn" onclick="closeProject()">← Back to Projects</button>
@@ -1859,90 +1828,55 @@ function renderProject(id){
       <div style="font-size:13px;opacity:.85;margin-top:5px;">${p.concept}</div>
       <div class="p-chips"><span class="p-chip">📊 ${p.diff}</span><span class="p-chip">⏱ ${p.time}</span><span class="p-chip">🏆 ${p.xp}</span></div>
     </div>
-    <div class="tabs" id="proj-tabs">
-      <button class="tab active" onclick="projTab(this,'pov-${id}','${id}')">📋 Overview</button>
-      <button class="tab" onclick="projTabG(this,'pst-${id}','${id}',1)">🧪 Steps</button>
-      <button class="tab" onclick="projTabG(this,'prf-${id}','${id}',2)">🧠 Reflect</button>
-      <button class="tab" onclick="projTabG(this,'prw-${id}','${id}',3)">🏆 Reward</button>
+    <div class="tabs">
+      <button class="tab active" id="tab-ov-${id}" onclick="projTab(this,'pov-${id}')">📋 Overview</button>
+      <button class="tab" id="tab-st-${id}" onclick="projTab(this,'pst-${id}')">🧪 Steps</button>
     </div>
-    <div class="locked-notice" id="plk-${id}">⚠️ Complete and mark all steps before unlocking.</div>
-    <div class="locked-notice" id="pqlk-${id}">⚠️ Answer all questions in Reflect first.</div>
     <div class="panel active" id="pov-${id}">
-      <div class="card"><div class="card-ttl">📚 What You Will Learn</div>
+      <div class="card">
+        <div class="card-ttl">📚 What You Will Learn</div>
         ${p.obj.map(o=>`<div class="l-obj"><div class="l-obj-dot">✓</div><div class="l-obj-txt">${o}</div></div>`).join('')}
       </div>
       <div class="info-box">💡 <strong>Why it matters:</strong> ${p.why}</div>
       <div class="formula-box">${p.formula}</div>
       <div class="card-ttl" style="margin:18px 0 10px;">🛠️ Materials Needed</div>
       <div class="mats">${mats}</div>
-      <button class="btn-pr" style="margin-top:14px;" onclick="projTabG(null,'pst-${id}','${id}',1)">Start Project →</button>
+      <button class="btn-pr" style="margin-top:14px;" onclick="projTab(document.getElementById('tab-st-${id}'),'pst-${id}')">Start Project →</button>
     </div>
-    <div class="panel" id="pst-${id}">${steps}
+    <div class="panel" id="pst-${id}">
+      ${steps}
       <div id="psp-${id}" style="font-size:13px;color:var(--text2);margin:14px 0;font-weight:600;"></div>
-      <button class="btn-pr" onclick="projTabG(null,'prf-${id}','${id}',2)">Test Your Knowledge →</button>
-    </div>
-    <div class="panel" id="prf-${id}">
-      <div class="card"><div class="card-ttl">🧠 Reflection Questions</div>${qHTML}</div>
-      <button class="btn-pr" onclick="projTabG(null,'prw-${id}','${id}',3)">Claim Your Reward →</button>
-    </div>
-    <div class="panel" id="prw-${id}"><div id="prwc-${id}"></div></div>`;
+    </div>`;
+
   updateProjProg(id);
 }
-function projTab(btn,panelId,id){
-  document.getElementById('proj-detail').querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
-  document.getElementById('proj-detail').querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  if(btn)btn.classList.add('active');
-  const p=document.getElementById(panelId);if(p)p.classList.add('active');
+
+function projTab(btn, panelId){
+  const detail=document.getElementById('proj-detail');
+  detail.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  detail.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  const p=document.getElementById(panelId);
+  if(p) p.classList.add('active');
 }
-function projTabG(btn,panelId,id,level){
-  const lk=document.getElementById('plk-'+id),qk=document.getElementById('pqlk-'+id);
-  if(lk)lk.classList.remove('show');if(qk)qk.classList.remove('show');
-  if(level>=2&&!projAllSteps(id)){if(lk)lk.classList.add('show');return;}
-  if(level>=3&&!projAllQ(id)){if(qk)qk.classList.add('show');return;}
-  if(level===3)buildReward(id);
-  if(!btn){const tabs=document.getElementById('proj-detail').querySelectorAll('.tab');btn=tabs[level]||null;}
-  projTab(btn,panelId,id);
-}
-function projAllSteps(id){return projSteps[id]&&projSteps[id].every(Boolean);}
-function projAllQ(id){return projAnswered[id]&&projAnswered[id].every(Boolean);}
+
 function markStep(id,i){
-  if(projSteps[id][i])return;projSteps[id][i]=true;
-  const card=document.getElementById('sc-'+id+'-'+i),badge=document.getElementById('scb-'+id+'-'+i);
-  if(card)card.classList.add('done');
+  if(projSteps[id][i])return;
+  projSteps[id][i]=true;
+  const card=document.getElementById('sc-'+id+'-'+i);
+  const badge=document.getElementById('scb-'+id+'-'+i);
+  if(card) card.classList.add('done');
   if(badge){badge.classList.add('done');badge.textContent='✓';}
   const btn=card?.querySelector('.sc-done-btn');
   if(btn){btn.classList.add('done');btn.textContent='✓ Done';}
   updateProjProg(id);
 }
+
 function updateProjProg(id){
-  const done=projSteps[id].filter(Boolean).length,total=PROJECTS[id].steps.length;
-  const el=document.getElementById('psp-'+id);if(el)el.textContent=`Progress: ${done} / ${total} steps completed`;
-}
-function answerProjQ(id,qi,oi){
-  if(projAnswered[id][qi])return;projAnswered[id][qi]=true;
-  const q=PROJECTS[id].qs[qi];const correct=oi===q.ans;
-  if(correct)projQScores[id]=(projQScores[id]||0)+1;
-  for(let i=0;i<q.opts.length;i++){
-    const opt=document.getElementById('pqo-'+id+'-'+qi+'-'+i);
-    if(opt){opt.disabled=true;opt.classList.remove('correct','wrong');if(i===q.ans)opt.classList.add('correct');else if(i===oi)opt.classList.add('wrong');}
-  }
-  const fb=document.getElementById('pqf-'+id+'-'+qi);
-  if(fb){fb.textContent=q.exp;fb.className='q-fb show '+(correct?'ok':'no');}
-}
-function buildReward(id){
-  const p=PROJECTS[id];const score=projQScores[id]||0,total=p.qs.length,pct=Math.round(score/total*100);
-  const grade=pct===100?'Perfect Score! 🏆':pct>=67?'Great Job! 🎉':'Keep Practising! 📚';
-  const el=document.getElementById('prwc-'+id);if(!el)return;
-  el.innerHTML=`<div class="reward-box">
-    <div style="font-size:58px;margin-bottom:14px;">${p.badge}</div>
-    <div style="font-family:var(--font-display);font-size:23px;font-weight:900;margin-bottom:6px;">${p.title} Badge</div>
-    <div style="font-size:14px;opacity:.85;margin-bottom:18px;">You earned <strong>${p.xp}</strong>!</div>
-    <div style="background:rgba(255,255,255,.18);border-radius:12px;padding:18px;margin-bottom:18px;">
-      <div style="font-size:34px;font-weight:900;">${score} / ${total}</div>
-      <div style="opacity:.85;">${pct}% — ${grade}</div>
-    </div>
-    <button class="btn-ol" style="color:#fff;border-color:rgba(255,255,255,.4);" onclick="closeProject()">← Back to Projects</button>
-  </div>`;
+  const done=projSteps[id].filter(Boolean).length;
+  const total=PROJECTS[id].steps.length;
+  const el=document.getElementById('psp-'+id);
+  if(el) el.textContent=`Progress: ${done} / ${total} steps completed`;
 }
 
 /* ════════════════════════════════
